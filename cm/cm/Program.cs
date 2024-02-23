@@ -71,6 +71,10 @@ while (SessionManager.ValidateToken(session, user.getUsername()))
     {
         return;
     }
+    else if (_args[0] == "-d")
+    {
+        user.deleteSong(Convert.ToInt32(_args[1]));
+    }
     else if (_args[0] == "+d")
     {
         using (SQLiteConnection connection = new SQLiteConnection(connectionString))
@@ -88,7 +92,7 @@ while (SessionManager.ValidateToken(session, user.getUsername()))
             ShowAllSongs(connection);
         }
     }
-    else if (_args[0] == "s")
+    else if (_args[0] == "-s")
     {
         var list = user.GetPlaylistSongs();
         foreach (var song in list)

@@ -120,6 +120,31 @@ namespace cm
             return playlistSongs;
         }
 
+        public void deleteSong(int songId)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                string playlistName = usrnm + "_list";
+                string deleteQuery = $"DELETE FROM {playlistName} WHERE Id = @SongId;";
+
+                SQLiteCommand command = new SQLiteCommand(deleteQuery, connection);
+                command.Parameters.AddWithValue("@SongId", songId);
+
+                int rowsAffected = command.ExecuteNonQuery();
+
+                if (rowsAffected > 0)
+                {
+                    Console.WriteLine($"Пісню з Id = {songId} видалено успішно.");
+                }
+                else
+                {
+                    Console.WriteLine($"Пісні з Id = {songId} не знайдено.");
+                }
+            }
+        }
+
+
         public void AddSongToPlaylist(int songId)
         {
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
