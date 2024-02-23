@@ -1,9 +1,12 @@
-﻿using System.Data.SQLite;
+﻿using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.SQLite;
 using System.Security.Cryptography.X509Certificates;
+using cm;
 
 const string connectionString = "Data Source=data.db;Version=3;";
 
-List<string> Musics = new List<string>();
+User user = null;
+string session = null;
 
 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
 {
@@ -27,10 +30,29 @@ using (SQLiteConnection connection = new SQLiteConnection(connectionString))
     createTablesCommand.ExecuteNonQuery();
 }
 
-while (true)
+Console.WriteLine("Please, login or regiser (-l/-r) ");
+string input = Console.ReadLine();
+string[] _args = input.Split(' ');
+if (_args[0] == "-r")
 {
-    string input = Console.ReadLine();
-    string[] _args = input.Split(' ');
+    user = new User(_args[1], _args[2]);
+    user.Register();
+    user.Login();
+    session = SessionManager.GenerateToken(_args[1]);
+ 
+}
+ else if (_args[0] == "-l")
+{
+    user = new User(_args[1], _args[2]);
+    user.Login();
+    session = SessionManager.GenerateToken(_args[1]);
+}
+
+
+while (SessionManager.ValidateToken(session, user.getUsername()))
+{
+    input = Console.ReadLine();
+    _args = input.Split(' ');
     if (_args[0] == "+a")
     {
         using (SQLiteConnection connection = new SQLiteConnection(connectionString))
@@ -41,11 +63,15 @@ while (true)
             FillSongsTable(connection, _args[1]);
         }
     }
+    else if (_args[0] == "-a")
+    {
+        user.AddSongToPlaylist(Convert.ToInt32(_args[1]));
+    }
     else if (_args[0] == "-q")
     {
         return;
     }
-    else if (_args[0] == "-d")
+    else if (_args[0] == "+d")
     {
         using (SQLiteConnection connection = new SQLiteConnection(connectionString))
         {
@@ -54,7 +80,7 @@ while (true)
             DeleteSongById(connection, songId);
         }
     }
-    else if (_args[0] == "-l") 
+    else if (_args[0] == "+s")
     {
         using (SQLiteConnection connection = new SQLiteConnection(connectionString))
         {
@@ -62,7 +88,16 @@ while (true)
             ShowAllSongs(connection);
         }
     }
+    else if (_args[0] == "s")
+    {
+        var list = user.GetPlaylistSongs();
+        foreach (var song in list)
+        {
+            Console.WriteLine($" {song.Id}|{song.Name}");
+        }
+    }
 }
+
 static void FillSongsTable(SQLiteConnection connection, string directory)
 {
     string[] musicFiles = Directory.GetFiles(directory, "*.m4a", SearchOption.AllDirectories);
@@ -128,33 +163,4 @@ static byte[] ConvertToByteArray(string filePath)
         }
     }
     return fileBytes;
-}
-
-class User
-{
-    private int id { get; set; }
-    private string usrnm { get; set; }
-    private string psswd { get; set; }
-
-    public User(string usrnm, string psswd)
-    {
-        this.usrnm = usrnm;
-        this.psswd = psswd;
-        this.id = setId();
-    }
-
-    public static int setId()
-    {
-        string connectionString = "Data Source=data.db;Version=3;";
-        int lastid;
-        using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-        {
-            connection.Open();
-
-            string query = "SELECT COUNT(*) FROM Users;";
-            SQLiteCommand command = new SQLiteCommand(query, connection);
-            lastid = Convert.ToInt32(command.ExecuteScalar());
-        }
-        return lastid + 1;
-    }
 }
