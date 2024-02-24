@@ -1,0 +1,26 @@
+﻿@model LoginViewModel
+
+@{
+    ViewBag.Title = "Увійти";
+}
+
+<h2>Увійти до облікового запису</h2>
+
+@using (Html.BeginForm("Login", "Account", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Username)
+        @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password)
+        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+    </div>
+    <button type="submit" class="btn btn-primary">Увійти</button>
+}
+
+<p>
+    @Html.ActionLink("Зареєструватись", "Register", "Account", null, new { @class = "btn btn-link" })
+</p>

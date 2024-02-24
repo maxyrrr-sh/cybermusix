@@ -11,6 +11,7 @@ namespace cm
         private int id { get; set; }
         private string usrnm { get; set; }
         private string hashedPsswd { get; set; }
+        private string playlistName { get; set; }
 
         public User(string usrnm, string psswd)
         {
@@ -18,6 +19,12 @@ namespace cm
             this.hashedPsswd = HashPassword(psswd);
             this.id = setId();
             createPlaylist();
+            playlistName = usrnm + "_list";
+        }
+
+        public string getPlaylistName()
+        {
+            return playlistName;
         }
 
         public string getUsername()
@@ -78,21 +85,6 @@ namespace cm
             }
         }
 
-        void createPlaylist()
-        {
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-            {
-                string name = usrnm + "_list";
-                connection.Open();
-                string query = @"
-                CREATE TABLE IF NOT EXISTS @name (
-                    Id INTEGER PRIMARY KEY,
-                );";
-                SQLiteCommand command = new SQLiteCommand(query, connection);
-                command.Parameters.AddWithValue("@name", name);
-            }
-        }
-
         public List<PlaylistSong> GetPlaylistSongs()
         {
             List<PlaylistSong> playlistSongs = new List<PlaylistSong>();
@@ -100,19 +92,24 @@ namespace cm
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-                string playlistName = usrnm + "_list";
-
                 string getPlaylistQuery = $@"
                 SELECT SongId, Name FROM {playlistName} 
                 INNER JOIN songs ON {playlistName}.SongId = songs.Id;";
                 using (SQLiteCommand getPlaylistCommand = new SQLiteCommand(getPlaylistQuery, connection))
                 {
-                    SQLiteDataReader reader = getPlaylistCommand.ExecuteReader();
-                    while (reader.Read())
+                    try
                     {
-                        int songId = reader.GetInt32(0);
-                        string songName = reader.GetString(1);
-                        playlistSongs.Add(new PlaylistSong { Id = songId, Name = songName });
+                        SQLiteDataReader reader = getPlaylistCommand.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            int songId = reader.GetInt32(0);
+                            string songName = reader.GetString(1);
+                            playlistSongs.Add(new PlaylistSong { Id = songId, Name = songName });
+                        }
+                    }
+                    catch (System.Data.SQLite.SQLiteException e)
+                    {
+                        Console.WriteLine(e);
                     }
                 }
             }
@@ -120,30 +117,19 @@ namespace cm
             return playlistSongs;
         }
 
-        public void deleteSong(int songId)
+        void createPlaylist()
         {
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-                string playlistName = usrnm + "_list";
-                string deleteQuery = $"DELETE FROM {playlistName} WHERE Id = @SongId;";
-
-                SQLiteCommand command = new SQLiteCommand(deleteQuery, connection);
-                command.Parameters.AddWithValue("@SongId", songId);
-
-                int rowsAffected = command.ExecuteNonQuery();
-
-                if (rowsAffected > 0)
-                {
-                    Console.WriteLine($"Пісню з Id = {songId} видалено успішно.");
-                }
-                else
-                {
-                    Console.WriteLine($"Пісні з Id = {songId} не знайдено.");
-                }
+                string query = @"
+                CREATE TABLE IF NOT EXISTS @name (
+                    Id INTEGER PRIMARY KEY,
+                );";
+                SQLiteCommand command = new SQLiteCommand(query, connection);
+                command.Parameters.AddWithValue("@name", playlistName);
             }
-        }
-
+        }  
 
         public void AddSongToPlaylist(int songId)
         {
