@@ -19,9 +19,8 @@ using (SQLiteConnection connection = new SQLiteConnection(connectionString))
 
                 CREATE TABLE IF NOT EXISTS Songs (
                     Id INTEGER PRIMARY KEY,
-                    Artist TEXT,
                     Name TEXT,
-                    FileId INTEGER
+                    FileData BLOB
                 );
             ";
 
@@ -55,13 +54,7 @@ while (SessionManager.ValidateToken(session, user.getUsername()))
     _args = input.Split(' ');
     if (_args[0] == "+a")
     {
-        using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-        {
-            connection.Open();
-
-
-            FillSongsTable(connection, _args[1]);
-        }
+        FillSongsTable(_args[1]);
     }     //add global 
     else if (_args[0] == "-a")
     {
@@ -102,22 +95,29 @@ while (SessionManager.ValidateToken(session, user.getUsername()))
     }//show personal
 }
 
-static void FillSongsTable(SQLiteConnection connection, string directory)
+static void FillSongsTable(string directory)
 {
     string[] musicFiles = Directory.GetFiles(directory, "*.m4a", SearchOption.AllDirectories);
 
-    foreach (string filePath in musicFiles)
+    using (SQLiteConnection connection = new SQLiteConnection(connectionString))
     {
-        FileInfo fileInfo = new FileInfo(filePath);
+        connection.Open();
 
-        string fileName = Path.GetFileNameWithoutExtension(filePath);
-        string artist = "Unknown";
-        string insertQuery = $"INSERT INTO Songs (Artist, Name, FileId) VALUES ('{artist}', '{fileName}', @FileId);";
+        foreach (string filePath in musicFiles)
+        {
+            FileInfo fileInfo = new FileInfo(filePath);
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
 
-        SQLiteCommand command = new SQLiteCommand(insertQuery, connection);
-        command.Parameters.AddWithValue("@FileId", ConvertToByteArray(filePath));
+            byte[] fileData = ConvertToByteArray(filePath);
 
-        command.ExecuteNonQuery();
+            string insertQuery = $"INSERT INTO Songs (Name, FileData) VALUES (@Name, @FileData);";
+
+            var command = new SQLiteCommand(insertQuery, connection);
+            command.Parameters.AddWithValue("@Name", fileName);
+            command.Parameters.AddWithValue("@FileData", fileData);
+
+            command.ExecuteNonQuery();
+        }
     }
 }
 

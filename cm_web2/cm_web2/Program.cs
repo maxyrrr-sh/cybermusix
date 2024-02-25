@@ -1,13 +1,13 @@
 using cm;
 using System.Data.SQLite;
 using Microsoft.AspNetCore.Http;
+using cm_web2.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 const string connectionString = "Data Source=data.db;Version=3;";
 SessionManager.sessionToken = null;
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,9 +30,8 @@ using (SQLiteConnection connection = new SQLiteConnection(connectionString))
 
                 CREATE TABLE IF NOT EXISTS Songs (
                     Id INTEGER PRIMARY KEY,
-                    Artist TEXT,
                     Name TEXT,
-                    FileId INTEGER
+                    FileData BLOB
                 );
             ";
 

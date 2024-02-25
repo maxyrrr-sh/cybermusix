@@ -14,7 +14,6 @@ namespace cm_web2.Controllers
     {
         const string connectionString = "Data Source=data.db;Version=3;";
 
-        static User user = null;
 
         [HttpGet]
         public ActionResult Register()
@@ -27,8 +26,8 @@ namespace cm_web2.Controllers
         {
             if (ModelState.IsValid)
             {
-                user = new User(model.Username, model.Password);
-                user.Register();
+                cm.User.user = new User(model.Username, model.Password);
+                cm.User.user.Register();
                 return RedirectToAction("Login");
             }
             return View(model);
@@ -44,7 +43,7 @@ namespace cm_web2.Controllers
         public ActionResult Logout(RegisterViewModel model)
         {
             SessionManager.sessionToken = null;
-            user = null;
+            cm.User.user = null;
             Console.WriteLine("logged out");
             return RedirectToAction("Index", "Home");
         }
@@ -64,11 +63,11 @@ namespace cm_web2.Controllers
             }
 
             // Виклик методу Login з класу User
-            user = new User(model.Username, model.Password);
-            if (user.Login())
+            cm.User.user = new User(model.Username, model.Password);
+            if (cm.User.user.Login())
             {
                 // Генерація токену сесії
-                SessionManager.sessionToken = SessionManager.GenerateToken(user.getUsername());
+                SessionManager.sessionToken = SessionManager.GenerateToken(cm.User.user.getUsername());
                 Console.WriteLine("Session has been started with token " + SessionManager.sessionToken);
                 // Збереження токену сесії у сесії ASP.NET
                

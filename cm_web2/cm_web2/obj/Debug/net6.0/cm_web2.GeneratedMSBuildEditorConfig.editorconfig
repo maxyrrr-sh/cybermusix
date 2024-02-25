@@ -32,12 +32,28 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/Home/Playlist.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQbGF5bGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/Home/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxSZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/Home/SessionError.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTZXNzaW9uRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/Music/Playlist.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTXVzaWNcUGxheWxpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/Music/SessionError.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTXVzaWNcU2Vzc2lvbkVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/Shared/Error.cshtml]
@@ -50,6 +66,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/User/Playlist.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxQbGF5bGlzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/User/Documents/c--/cybermusix/cm_web2/cm_web2/Views/_ViewImports.cshtml]

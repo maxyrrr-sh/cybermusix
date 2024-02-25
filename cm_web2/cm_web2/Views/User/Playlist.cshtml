@@ -1,0 +1,29 @@
+﻿@page
+@model List<byte[]>
+@{
+    ViewData["Title"] = "Playlist";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - My Playlist</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <h1>My Playlist</h1>
+    <div>
+        @foreach (var song in Model)
+        {
+            <audio controls>
+                <source src="@(string.Format("data:audio/m4a;base64,{0}", Convert.ToBase64String(song)))" type="audio/mp4">
+                Your browser does not support the audio element.
+            </audio>
+            <br />
+        }
+    </div>
+</body>
+</html>

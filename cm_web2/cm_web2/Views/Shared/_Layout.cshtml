@@ -25,20 +25,26 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Конфіденційність</a>
                         </li>
-                        <!-- Ваші додаткові пункти меню тут -->
+                       
                     </ul>
                     <ul class="navbar-nav ml-auto">
-                        <!-- Умовний блок для перевірки наявності токену сесії -->
+                        
                         @if (!string.IsNullOrEmpty(SessionManager.sessionToken))
                         {
                             <!-- Кнопка "Мій плейлист" -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Playlist">Мій плейлист</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="">Мій плейлист</a>
                             </li>
                             <!-- Форма для виходу з облікового запису -->
                             <li class="nav-item">
                                 <form id="logoutForm" method="post" asp-controller="Account" asp-action="Logout">
                                     <button type="submit" class="nav-link text-dark">Вийти</button>
+                                </form>
+                            </li>
+
+                            <li class="nav-item">
+                                <form id="browse" asp-controller="Music" asp-action="Playlist">
+                                    <button type="submit" class="nav-link text-dark">Переглянути</button>
                                 </form>
                             </li>
                         } else

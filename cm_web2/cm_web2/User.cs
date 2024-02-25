@@ -12,7 +12,7 @@ namespace cm
         private string usrnm { get; set; }
         private string hashedPsswd { get; set; }
         private string playlistName { get; set; }
-
+        public static User user;
         public User(string usrnm, string psswd)
         {
             this.usrnm = usrnm;

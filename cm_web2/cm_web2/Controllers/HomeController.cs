@@ -1,11 +1,13 @@
 ﻿using cm_web2.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.SQLite;
 using System.Diagnostics;
 
 namespace cm_web2.Controllers
 {
     public class HomeController : Controller
     {
+        const string connectionString = "Data Source=data.db;Version=3;";
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -23,6 +25,11 @@ namespace cm_web2.Controllers
             return View();
         }
         public IActionResult Login()
+        {
+            return View();
+        }
+
+        public IActionResult SessionError()
         {
             return View();
         }
