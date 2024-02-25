@@ -136,18 +136,15 @@ namespace cm
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-
-                // Перевірка наявності плейлиста користувача
                 if (this.usrnm != null)
                 {
                     string playlistName = usrnm + "_list";
 
-                    // Пошук або створення таблиці плейлиста
                     string createPlaylistQuery = $@"
-                CREATE TABLE IF NOT EXISTS {playlistName} (
+                    CREATE TABLE IF NOT EXISTS {playlistName} (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     SongId INTEGER
-                );";
+                    );";
                     using (SQLiteCommand createPlaylistCommand = new SQLiteCommand(createPlaylistQuery, connection))
                     {
                         createPlaylistCommand.ExecuteNonQuery();

@@ -13,7 +13,6 @@ public class Music
 
 public class MusicController : Controller
 {
-    // Метод для додавання музики з папки
     public IActionResult AddMusicFromFolder(string folderPath)
     {
         string[] musicFiles = Directory.GetFiles(folderPath, "*.m4a", SearchOption.AllDirectories);
@@ -39,10 +38,9 @@ public class MusicController : Controller
             }
         }
 
-        return RedirectToAction("Index");
+        return RedirectToAction("Playlist");
     }
 
-    // Метод для видалення музики за ідентифікатором
     public IActionResult DeleteMusic(int id)
     {
         using (var connection = new SQLiteConnection("Data Source=data.db"))
@@ -81,7 +79,7 @@ public class MusicController : Controller
         {
             if (SessionManager.ValidateToken(SessionManager.sessionToken, cm.User.user.getUsername()))
             {
-                var model = GetAllMusic();
+                var model = GetPersonalMusic();
                 return View(model);
             }
             else return RedirectToAction("SessionError");
@@ -93,7 +91,6 @@ public class MusicController : Controller
         }
     }
 
-    // Метод для зчитування музики з бази даних
     private List<Music> GetAllMusic()
     {
         var songs = new List<Music>();
@@ -129,13 +126,14 @@ public class MusicController : Controller
     }
     private List<Music> GetPersonalMusic()
     {
-        var songs = new List<Music>();
+        var personalMusic = new List<Music>();
 
         using (var connection = new SQLiteConnection("Data Source=data.db"))
         {
             connection.Open();
 
-            var selectQuery = $"SELECT * FROM {cm.User.user.getPlaylistName()}";
+            // Припустимо, що cm.User.user.getPlaylistName() - це назва таблиці
+            var selectQuery = $"SELECT Songs.* FROM Songs INNER JOIN {cm.User.user.getPlaylistName()} ON Songs.Id = {cm.User.user.getPlaylistName()}.SongId";
             var command = new SQLiteCommand(selectQuery, connection);
 
             using (var reader = command.ExecuteReader())
@@ -153,19 +151,34 @@ public class MusicController : Controller
                         FileData = fileData
                     };
 
-                    songs.Add(music);
+                    personalMusic.Add(music);
                 }
             }
         }
 
-        return songs;
+        return personalMusic;
+    }
+
+    public IActionResult Delete(int songId)
+    {
+        var deleteQuery = $"DELETE FROM {cm.User.user.getPlaylistName()} WHERE SongId = @SongId";
+
+        using (var connection = new SQLiteConnection("Data Source=data.db"))
+        {
+            connection.Open();
+            var command = new SQLiteCommand(deleteQuery, connection);
+            command.Parameters.AddWithValue("@SongId", songId);
+            command.ExecuteNonQuery();
+        }
+
+        return RedirectToAction("PersonalPlaylist");
     }
 
     [HttpPost]
     public IActionResult GetSongId(int songId)
     {
         cm.User.user.AddSongToPlaylist(songId);
-        return RedirectToAction("Index"); // Припустимо, що метод Index відповідає сторінці зі списком пісень
+        return RedirectToAction("Playlist");  
     }
 
     private byte[] ConvertToByteArray(string filePath)

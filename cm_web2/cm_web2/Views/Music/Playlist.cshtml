@@ -6,7 +6,7 @@
     <thead>
         <tr>
             <th>Назва</th>
-            <th>Дії</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -22,7 +22,7 @@
                     <!-- Додано кнопку для кожної пісні, що відправляє id пісні до деякого маршруту -->
                     <form asp-controller="Music" asp-action="GetSongId" method="post">
                         <input type="hidden" name="songId" value="@music.Id" />
-                        <button type="submit" class="btn btn-primary">Отримати ID пісні</button>
+                        <button type="submit" class="btn btn-primary">Додати до персонального плейлиста</button>
                     </form>
                 </td>
             </tr>
@@ -30,4 +30,9 @@
     </tbody>
 </table>
 
-<a asp-action="AddMusicFromFolder" asp-route-folderPath="~/Music">Додати музику з папки</a>
+<form method="post" enctype="multipart/form-data" asp-controller="Music" asp-action="AddMusicFromFolder">
+    <input type="file" name="folderPath" directory webkitdirectory multiple style="display:none" id="folderPathInput" />
+    <button type="button" onclick="document.getElementById('folderPathInput').click();">Вибрати папку</button>
+    <button type="submit">Додати музику з папки</button>
+</form>
+
