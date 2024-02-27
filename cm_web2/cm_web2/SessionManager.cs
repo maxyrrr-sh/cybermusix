@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Linq;
@@ -6,9 +7,7 @@ using System.Linq;
 class SessionManager
 {
     private static readonly byte[] Key = Encoding.UTF8.GetBytes("anonymous");
-    public static string sessionToken;
 
-    // Метод для генерації токену
     public static string GenerateToken(string username)
     {
         byte[] usernameBytes = Encoding.UTF8.GetBytes(username);
@@ -30,7 +29,6 @@ class SessionManager
         }
     }
 
-    // Метод для валідації токену
     public static bool ValidateToken(string token, string username)
     {
         byte[] tokenData = Convert.FromBase64String(token);
@@ -50,12 +48,10 @@ class SessionManager
         using (HMACSHA256 hmac = new HMACSHA256(Key))
         {
             expectedSignature = hmac.ComputeHash(data);
-            // Перевірка підпису
             if (!hmac.ComputeHash(data).SequenceEqual(receivedSignature))
             {
                 return false;
             }
-            // Перевірка терміну дії токену (60 хвилин)
             long timestamp = BitConverter.ToInt64(timestampBytes, 0);
             DateTime tokenTime = DateTime.FromBinary(timestamp);
             return (DateTime.UtcNow - tokenTime).TotalMinutes <= 60;

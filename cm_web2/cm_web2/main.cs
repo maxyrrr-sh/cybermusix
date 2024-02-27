@@ -88,7 +88,7 @@ internal partial class Program
                     deleteSong(songId, "Songs");
                 }
             }//delete global
-            else if (_args[0] == "+s")
+            /*else if (_args[0] == "+s")
             {
                 var list = GetAllSongs();
                 foreach (var song in list)
@@ -104,85 +104,86 @@ internal partial class Program
                     Console.WriteLine($" {song.Id}|{song.Name}");
                 }
             }//show personal
-        }
+        }*/
 
-        static void FillSongsTable(SQLiteConnection connection, string directory)
-        {
-            string[] musicFiles = Directory.GetFiles(directory, "*.m4a", SearchOption.AllDirectories);
-
-            foreach (string filePath in musicFiles)
+            static void FillSongsTable(SQLiteConnection connection, string directory)
             {
-                FileInfo fileInfo = new FileInfo(filePath);
+                string[] musicFiles = Directory.GetFiles(directory, "*.m4a", SearchOption.AllDirectories);
 
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                string artist = "Unknown";
-                string insertQuery = $"INSERT INTO Songs (Artist, Name, FileId) VALUES ('{artist}', '{fileName}', @FileId);";
-
-                SQLiteCommand command = new SQLiteCommand(insertQuery, connection);
-                command.Parameters.AddWithValue("@FileId", ConvertToByteArray(filePath));
-
-                command.ExecuteNonQuery();
-            }
-        }
-
-        static void deleteSong(int songId, string playlistName)
-        {
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-            {
-                connection.Open();
-                string deleteQuery = $"DELETE FROM {playlistName} WHERE Id = @SongId;";
-
-                SQLiteCommand command = new SQLiteCommand(deleteQuery, connection);
-                command.Parameters.AddWithValue("@SongId", songId);
-
-                int rowsAffected = command.ExecuteNonQuery();
-
-                if (rowsAffected > 0)
+                foreach (string filePath in musicFiles)
                 {
-                    Console.WriteLine($"Пісню з Id = {songId} видалено успішно.");
-                }
-                else
-                {
-                    Console.WriteLine($"Пісні з Id = {songId} не знайдено.");
+                    FileInfo fileInfo = new FileInfo(filePath);
+
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+                    string artist = "Unknown";
+                    string insertQuery = $"INSERT INTO Songs (Artist, Name, FileId) VALUES ('{artist}', '{fileName}', @FileId);";
+
+                    SQLiteCommand command = new SQLiteCommand(insertQuery, connection);
+                    command.Parameters.AddWithValue("@FileId", ConvertToByteArray(filePath));
+
+                    command.ExecuteNonQuery();
                 }
             }
-        }
 
-        static List<PlaylistSong> GetAllSongs()
-        {
-            List<PlaylistSong> allSongs = new List<PlaylistSong>();
-
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            static void deleteSong(int songId, string playlistName)
             {
-                connection.Open();
-
-                string query = "SELECT Id, Name FROM Songs;";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
-                    SQLiteDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+                    connection.Open();
+                    string deleteQuery = $"DELETE FROM {playlistName} WHERE Id = @SongId;";
+
+                    SQLiteCommand command = new SQLiteCommand(deleteQuery, connection);
+                    command.Parameters.AddWithValue("@SongId", songId);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
                     {
-                        int songId = reader.GetInt32(0);
-                        string songName = reader.GetString(1);
-                        allSongs.Add(new PlaylistSong { Id = songId, Name = songName });
+                        Console.WriteLine($"Пісню з Id = {songId} видалено успішно.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Пісні з Id = {songId} не знайдено.");
                     }
                 }
             }
 
-            return allSongs;
-        }
-
-        static byte[] ConvertToByteArray(string filePath)
-        {
-            byte[] fileBytes;
-            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            /*static List<PlaylistSong> GetAllSongs()
             {
-                using (BinaryReader br = new BinaryReader(fs))
+                List<PlaylistSong> allSongs = new List<PlaylistSong>();
+
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
-                    fileBytes = br.ReadBytes((int)fs.Length);
+                    connection.Open();
+
+                    string query = "SELECT Id, Name FROM Songs;";
+                    using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                    {
+                        SQLiteDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            int songId = reader.GetInt32(0);
+                            string songName = reader.GetString(1);
+                            allSongs.Add(new PlaylistSong { Id = songId, Name = songName });
+                        }
+                    }
                 }
+
+                return allSongs;
+            }*/
+
+            static byte[] ConvertToByteArray(string filePath)
+            {
+                byte[] fileBytes;
+                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (BinaryReader br = new BinaryReader(fs))
+                    {
+                        fileBytes = br.ReadBytes((int)fs.Length);
+                    }
+                }
+                return fileBytes;
             }
-            return fileBytes;
         }
     }
 }

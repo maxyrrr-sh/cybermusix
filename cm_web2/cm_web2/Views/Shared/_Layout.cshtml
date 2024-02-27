@@ -1,10 +1,9 @@
-﻿@using cm_web2.Controllers;
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Мій Проєкт</title>
+    <title>@ViewData["Title"] CyberMusix</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
@@ -29,19 +28,16 @@
                     </ul>
                     <ul class="navbar-nav ml-auto">
                         
-                        @if (!string.IsNullOrEmpty(SessionManager.sessionToken))
+                        @if (cm.User.isLogin)
                         {
-                            <!-- Кнопка "Мій плейлист" -->
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Music" asp-action="PersonalPlaylist">Мій плейлист</a>
                             </li>
-                            <!-- Форма для виходу з облікового запису -->
                             <li class="nav-item">
                                 <form id="logoutForm" method="post" asp-controller="Account" asp-action="Logout">
                                     <button type="submit" class="nav-link text-dark">Вийти</button>
                                 </form>
                             </li>
-
                             <li class="nav-item">
                                 <form id="browse" asp-controller="Music" asp-action="Playlist">
                                     <button type="submit" class="nav-link text-dark">Переглянути</button>
@@ -49,7 +45,6 @@
                             </li>
                         } else
                         {
-                            <!-- Кнопки "Увійти" та "Зареєструватись" -->
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Увійти</a>
                             </li>

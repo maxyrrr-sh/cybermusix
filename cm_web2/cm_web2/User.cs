@@ -13,6 +13,7 @@ namespace cm
         private string hashedPsswd { get; set; }
         private string playlistName { get; set; }
         public static User user;
+        public static bool isLogin;
         public User(string usrnm, string psswd)
         {
             this.usrnm = usrnm;
@@ -22,15 +23,9 @@ namespace cm
             playlistName = usrnm + "_list";
         }
 
-        public string getPlaylistName()
-        {
-            return playlistName;
-        }
+        public string getPlaylistName() => playlistName;
 
-        public string getUsername()
-        {
-            return this.usrnm;
-        }
+        public string getUsername() => usrnm;
 
         public void Register()
         {
@@ -75,6 +70,7 @@ namespace cm
                     if (count > 0)
                     {
                         Console.WriteLine("Успішний вхід.");
+                        User.isLogin = true;
                         return true;
 
                     }
@@ -83,38 +79,6 @@ namespace cm
                 Console.WriteLine("Невірне ім'я користувача або пароль.");
                 return false;
             }
-        }
-        
-        public List<PlaylistSong> GetPlaylistSongs()
-        {
-            List<PlaylistSong> playlistSongs = new List<PlaylistSong>();
-
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-            {
-                connection.Open();
-                string getPlaylistQuery = $@"
-                SELECT SongId, Name FROM {playlistName} 
-                INNER JOIN songs ON {playlistName}.SongId = songs.Id;";
-                using (SQLiteCommand getPlaylistCommand = new SQLiteCommand(getPlaylistQuery, connection))
-                {
-                    try
-                    {
-                        SQLiteDataReader reader = getPlaylistCommand.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            int songId = reader.GetInt32(0);
-                            string songName = reader.GetString(1);
-                            playlistSongs.Add(new PlaylistSong { Id = songId, Name = songName });
-                        }
-                    }
-                    catch (System.Data.SQLite.SQLiteException e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-            }
-
-            return playlistSongs;
         }
 
         void createPlaylist()
@@ -129,7 +93,7 @@ namespace cm
                 SQLiteCommand command = new SQLiteCommand(query, connection);
                 command.Parameters.AddWithValue("@name", playlistName);
             }
-        }  
+        }
 
         public void AddSongToPlaylist(int songId)
         {
@@ -150,7 +114,6 @@ namespace cm
                         createPlaylistCommand.ExecuteNonQuery();
                     }
 
-                    // Додавання пісні до плейлиста
                     string addSongQuery = $@"INSERT INTO {playlistName} (SongId) VALUES (@SongId);";
                     using (SQLiteCommand addSongCommand = new SQLiteCommand(addSongQuery, connection))
                     {
@@ -190,9 +153,4 @@ namespace cm
             return lastid + 1;
         }
     }
-}
-class PlaylistSong
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
 }

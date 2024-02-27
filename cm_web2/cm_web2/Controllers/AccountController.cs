@@ -6,14 +6,12 @@ using System.Data.SQLite;
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Http;
 
 namespace cm_web2.Controllers
 {
     public class AccountController : Controller
     {
         const string connectionString = "Data Source=data.db;Version=3;";
-
 
         [HttpGet]
         public ActionResult Register()
@@ -42,8 +40,10 @@ namespace cm_web2.Controllers
         [HttpPost]
         public ActionResult Logout(RegisterViewModel model)
         {
-            SessionManager.sessionToken = null;
+            Response.Cookies.Delete("SessionToken");
+            cm.User.isLogin = false;
             cm.User.user = null;
+            
             Console.WriteLine("logged out");
             return RedirectToAction("Index", "Home");
         }
@@ -62,16 +62,16 @@ namespace cm_web2.Controllers
                 return View(model);
             }
 
-            // Виклик методу Login з класу User
+            
             cm.User.user = new User(model.Username, model.Password);
             if (cm.User.user.Login())
             {
-                // Генерація токену сесії
-                SessionManager.sessionToken = SessionManager.GenerateToken(cm.User.user.getUsername());
-                Console.WriteLine("Session has been started with token " + SessionManager.sessionToken);
-                // Збереження токену сесії у сесії ASP.NET
-               
-                ViewBag.SessionToken = SessionManager.sessionToken;
+                
+                string sessionToken = SessionManager.GenerateToken(cm.User.user.getUsername());
+                Console.WriteLine("Session has been started with token " + sessionToken);
+                Response.Cookies.Append("SessionToken", sessionToken);
+
+                ViewBag.SessionToken = sessionToken;
                 return RedirectToAction("Index", "Home");
             }
             else

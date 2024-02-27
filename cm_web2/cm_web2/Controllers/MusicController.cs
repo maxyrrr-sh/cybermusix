@@ -61,7 +61,7 @@ public class MusicController : Controller
     {
         try
         {
-            if (SessionManager.ValidateToken(SessionManager.sessionToken, cm.User.user.getUsername()))
+            if (SessionManager.ValidateToken(HttpContext.Request.Cookies["SessionToken"], cm.User.user.getUsername()))
             {
                 var model = GetAllMusic();
                 return View(model);
@@ -77,7 +77,7 @@ public class MusicController : Controller
     {
         try
         {
-            if (SessionManager.ValidateToken(SessionManager.sessionToken, cm.User.user.getUsername()))
+            if (SessionManager.ValidateToken(HttpContext.Request.Cookies["SessionToken"], cm.User.user.getUsername()))
             {
                 var model = GetPersonalMusic();
                 return View(model);
@@ -121,7 +121,6 @@ public class MusicController : Controller
                 }
             }
         }
-
         return songs;
     }
     private List<Music> GetPersonalMusic()
@@ -132,7 +131,6 @@ public class MusicController : Controller
         {
             connection.Open();
 
-            // Припустимо, що cm.User.user.getPlaylistName() - це назва таблиці
             var selectQuery = $"SELECT Songs.* FROM Songs INNER JOIN {cm.User.user.getPlaylistName()} ON Songs.Id = {cm.User.user.getPlaylistName()}.SongId";
             var command = new SQLiteCommand(selectQuery, connection);
 
