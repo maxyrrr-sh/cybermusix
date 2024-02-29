@@ -13,8 +13,9 @@ public class Music
 
 public class MusicController : Controller
 {
-    public IActionResult AddMusicFromFolder(string folderPath)
+    public IActionResult AddMusicFromFolder()
     {
+        string folderPath = @"C:\Users\User\Downloads";
         string[] musicFiles = Directory.GetFiles(folderPath, "*.m4a", SearchOption.AllDirectories);
 
         using (var connection = new SQLiteConnection("Data Source=data.db"))

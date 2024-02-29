@@ -29,9 +29,7 @@
     </tbody>
 </table>
 
-<form method="post" enctype="multipart/form-data" asp-controller="Music" asp-action="AddMusicFromFolder">
-    <input type="file" name="folderPath" directory webkitdirectory multiple style="display:none" id="folderPathInput" />
-    <button type="button" onclick="document.getElementById('folderPathInput').click();">Вибрати папку</button>
+<form method="post" asp-controller="Music" asp-action="AddMusicFromFolder">
     <button type="submit">Додати музику з папки</button>
 </form>
 
